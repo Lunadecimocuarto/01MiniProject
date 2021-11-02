@@ -85,8 +85,8 @@ public class ProductDAO {
 
 		PreparedStatement stmt = 
 			con.prepareStatement(	sql,
-														ResultSet.TYPE_SCROLL_INSENSITIVE,
-														ResultSet.CONCUR_UPDATABLE);
+									ResultSet.TYPE_SCROLL_INSENSITIVE,
+									ResultSet.CONCUR_UPDATABLE);
 		ResultSet rs = stmt.executeQuery();
 
 		rs.last();

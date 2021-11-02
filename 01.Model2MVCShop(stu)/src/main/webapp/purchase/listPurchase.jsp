@@ -1,5 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+    
+   <%@ page import="java.util.*"%>
+   <%@ page import="com.model2.mvc.common.*"%>
+   <%@ page import="com.model2.mvc.service.purchase.vo.*"%>
+   
+    
+ <%
+	HashMap<String,Object> map=(HashMap<String,Object>)request.getAttribute("map");
+	SearchVO searchVO=(SearchVO)request.getAttribute("searchVO");
+	
+	int total=0;
+	ArrayList<PurchaseVO> list=null;
+	if(map != null){
+		total=((Integer)map.get("count")).intValue();
+		list=(ArrayList<PurchaseVO>)map.get("list");
+	}
+	
+	int currentPage=searchVO.getPage();
+	
+	int totalPage=0;
+	if(total > 0) {     
+		totalPage= total / searchVO.getPageUnit() ;
+		if(total%searchVO.getPageUnit() >0)
+			totalPage += 1;
+	}
+	
+%>
 
 
 <html>
@@ -37,7 +64,7 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0"	style="margin-top: 10px;">
 	<tr>
-		<td colspan="11">전체 4 건수, 현재 1 페이지</td>
+		<td colspan="11">전체  <%= total%> 건수, 현재 <%=currentPage %> 페이지</td>
 	</tr>
 	<tr>
 		<td class="ct_list_b" width="100">No</td>
@@ -55,85 +82,44 @@
 	<tr>
 		<td colspan="11" bgcolor="808285" height="1"></td>
 	</tr>
+	<%
+		int no=list.size();
+		for(int i=0; i<list.size(); i++){
+			PurchaseVO vo=(PurchaseVO)list.get(i);	
+	%>
+	
+	
+	<tr class="ct_list_pop">
+		<td align="center">
+			<a href="/getPurchase.do?tranNo=<%=vo.getTranNo()%>"><%=no--%></a>
+		</td>
+		<td></td>
+		<td align="left">
+			<a href="/getUser.do?userId=<%=vo.getBuyer().getUserId()%>"><%=vo.getBuyer().getUserId() %></a>
+		</td>
+		<td></td>
+		<td align="left"><%=vo.getReceiverName()%></td>
+		<td></td>
+		<td align="left"><%=vo.getReceiverPhone()%></td>
+		<td></td>
+		<td align="left">
+		<%if(vo.getTranCode().equals("0")){	%>
+		구매완료 
+		<%}else if(vo.getTranCode().equals("1")){%>
+		배송중
+		<%} else{%>
+		배송완료
+		<%}%>
+		</td>
+		<td></td>
+		<td align="left">
+		<%if(vo.getTranCode().equals("1")){ %>
+		<a href="/updateTranCode.do?tranNO=<%=vo.getTranNo()%>tranCode=2">물건도착</a>
+		<%}%>
+		</td>
+	</tr>
+	<%} %>
 
-	
-	
-	<tr class="ct_list_pop">
-		<td align="center">
-			<a href="/getPurchase.do?tranNo=10029">3</a>
-		</td>
-		<td></td>
-		<td align="left">
-			<a href="/getUser.do?userId=user12">user12</a>
-		</td>
-		<td></td>
-		<td align="left">SCOTT</td>
-		<td></td>
-		<td align="left">010</td>
-		<td></td>
-		<td align="left">현재
-				
-					구매완료
-				상태 입니다.</td>
-		<td></td>
-		<td align="left">
-			
-		</td>
-	</tr>
-	<tr>
-		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
-	</tr>
-	
-	
-	<tr class="ct_list_pop">
-		<td align="center">
-			<a href="/getPurchase.do?tranNo=10032">2</a>
-		</td>
-		<td></td>
-		<td align="left">
-			<a href="/getUser.do?userId=user12">user12</a>
-		</td>
-		<td></td>
-		<td align="left">SCOTT</td>
-		<td></td>
-		<td align="left">123</td>
-		<td></td>
-		<td align="left">현재
-				
-					배송완료
-				상태 입니다.</td>
-		<td></td>
-		<td align="left">
-			
-		</td>
-	</tr>
-	<tr>
-		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
-	</tr>
-	
-	
-	<tr class="ct_list_pop">
-		<td align="center">
-			<a href="/getPurchase.do?tranNo=10035">1</a>
-		</td>
-		<td></td>
-		<td align="left">
-			<a href="/getUser.do?userId=user12">user12</a>
-		</td>
-		<td></td>
-		<td align="left">권도윤</td>
-		<td></td>
-		<td align="left">123456</td>
-		<td></td>
-		<td align="left">현재
-				
-					배송완료
-				상태 입니다.</td>
-		<td></td>
-		<td align="left">
-			
-		</td>
-	</tr>
 	<tr>
 		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
 	</tr>
@@ -143,11 +129,12 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
 	<tr>
 		<td align="center">
+		<%
+			for(int i=1;i<=totalPage;i++){
+		%>
 		 
-			<a href="/listPurchase.do?page=1">1</a> 
-		 
-			<a href="/listPurchase.do?page=2">2</a> 
-		
+			<a href="/listPurchase.do?page=<%=i%>"><%=i %></a> 
+		<%}%>
 		</td>
 	</tr>
 </table>
